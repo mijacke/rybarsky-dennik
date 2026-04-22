@@ -1,0 +1,60 @@
+# --- Node.js ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+pids
+*.pid
+*.seed
+*.pid.lock
+.npm
+.eslintcache
+
+# --- Build ---
+dist/
+build/
+*.tsbuildinfo
+
+# --- Environment ---
+.env
+.env.*
+!.env.example
+
+# --- Logs ---
+logs/
+*.log
+
+# --- OS Generated ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# --- IDEs / Editors ---
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# --- Project Specific ---
+public/images/uploads/*
+!public/images/uploads/.gitkeep
+
+# --- AI & Tools ---
+.playwright-mcp/
+.codex/
+.claude/
+
+# --- Other/QA ---
+qa-real-map.png
+
+# --- AI & Documentation (Local only) ---
+AGENTS.md
+CLAUDE.md
+design-system/
+docs/
