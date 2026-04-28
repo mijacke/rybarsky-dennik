@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="sk" data-theme="<%= theme %>">
+<head>
+  <%- include('head', { title: typeof title !== "undefined" ? title : null }) %>
+</head>
+<body class="page <%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>">
+  <div class="app-bg" aria-hidden="true"></div>
+  <div class="app-grid" aria-hidden="true"></div>
+  <div class="app-noise" aria-hidden="true"></div>
+  <div class="shell">
+  <%- include('header') %>
+  <main class="main" id="main">

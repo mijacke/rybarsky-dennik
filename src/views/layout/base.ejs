@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="sk" data-theme="<%= theme %>">
+<head>
+  <%- include('head', { title: typeof title !== "undefined" ? title : null }) %>
+</head>
+<body class="page <%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>">
+  <a class="skip-link" href="#main">Preskočiť na obsah</a>
+  <div class="paper-grain" aria-hidden="true"></div>
+  <%- include('header') %>
+  <main class="main" id="main">
+    <%- body %>
+  </main>
+  <%- include('footer') %>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="/js/theme.js"></script>
+  <% if (typeof scripts !== 'undefined' && scripts) { %>
+    <% scripts.forEach(function(s){ %>
+      <script src="<%= s %>"></script>
+    <% }) %>
+  <% } %>
+</body>
+</html>

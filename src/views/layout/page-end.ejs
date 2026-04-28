@@ -1,0 +1,12 @@
+  </main>
+  <%- include('footer') %>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="/js/theme.js"></script>
+  <% if (typeof scripts !== "undefined" && scripts && scripts.length) { %>
+    <% scripts.forEach(function(s){ %>
+      <script src="<%= s %>"></script>
+    <% }) %>
+  <% } %>
+</body>
+</html>

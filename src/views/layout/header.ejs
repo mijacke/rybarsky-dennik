@@ -1,0 +1,57 @@
+<header class="header">
+  <div class="container header-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 12c2-3 5-6 9-6 4 0 7 2 9 4-1 1-1 3 0 4-2 2-5 4-9 4-4 0-7-3-9-6Z"/>
+          <circle cx="14" cy="11" r="0.7" fill="currentColor"/>
+        </svg>
+      </span>
+      <span class="brand-name">
+        <b>Tichá voda</b>
+        <small>SK ∙ Rybársky portál</small>
+      </span>
+    </a>
+
+    <nav class="nav" aria-label="Hlavná navigácia">
+      <a href="/" class="<%= currentPath === '/' ? 'active' : '' %>">Domov</a>
+      <a href="/revires" class="<%= currentPath.startsWith('/revires') ? 'active' : '' %>">Revíry</a>
+      <a href="/map" class="<%= currentPath.startsWith('/map') ? 'active' : '' %>">Mapa</a>
+      <% if (user) { %>
+        <a href="/moj-dennik" class="<%= currentPath.startsWith('/moj-dennik') ? 'active' : '' %>">Môj denník</a>
+      <% } %>
+      <% if (isAdmin) { %>
+        <a href="/admin" class="<%= currentPath.startsWith('/admin') ? 'active' : '' %>">Admin</a>
+      <% } %>
+    </nav>
+
+    <div class="header-actions">
+      <button class="icon-btn" id="themeToggle" aria-label="Prepnúť tému" title="Prepnúť tému" data-theme="<%= theme %>">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+      </button>
+
+      <% if (user) { %>
+        <a href="/revires/new" class="btn btn-ghost btn-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          Pridať revír
+        </a>
+        <form method="POST" action="/odhlasenie">
+          <button type="submit" class="btn btn-quiet btn-sm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H5v16h4M16 8l4 4-4 4M9 12h11"/></svg>
+            <%= user.name.split(' ')[0] %>
+          </button>
+        </form>
+      <% } else { %>
+        <a href="/prihlasenie" class="btn btn-quiet btn-sm">Prihlásenie</a>
+        <a href="/registracia" class="btn btn-primary btn-sm">Registrácia</a>
+      <% } %>
+    </div>
+  </div>
+</header>
+
+<% if (flash) { %>
+  <div class="flash <%= flash.type %>" role="status">
+    <span class="dot"></span>
+    <%= flash.message %>
+  </div>
+<% } %>
