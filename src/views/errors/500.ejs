@@ -1,0 +1,9 @@
+<%- include('../layout/page-start', { title: '500 — Chyba', bodyClass: 'page--error' }) %>
+<section class="error-page">
+  <span class="kicker">§ 500</span>
+  <h1 class="error-page__title">Niečo sa <em>zaseklo</em> v sieti.</h1>
+  <p class="error-page__lede">Server narazil na neočakávanú chybu. Skúste to neskôr.</p>
+  <% if (typeof message !== 'undefined') { %><p class="error-page__msg"><%= message %></p><% } %>
+  <a href="/" class="btn btn--ink">Späť na domov →</a>
+</section>
+<%- include('../layout/page-end') %>

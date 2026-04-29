@@ -1,0 +1,142 @@
+<%- include('../layout/page-start', { title: 'Domov', bodyClass: 'page--home' }) %>
+
+<section class="hero">
+  <div class="hero-rings" aria-hidden="true">
+    <svg viewBox="0 0 600 600">
+      <% for (let i = 0; i < 14; i++) { %>
+        <circle class="<%= i === 4 ? 'ring ring-glow' : 'ring' %>" cx="300" cy="300" r="<%= 50 + i * 20 %>"></circle>
+      <% } %>
+    </svg>
+  </div>
+  <div class="container">
+    <div class="hero-eyebrow"><span class="pulse"></span> Sezóna 2026 ∙ Aktuálne hladiny</div>
+    <h1><span class="glow">Tichá voda</span><br />brehy <span class="accent">podmieľa</span>.</h1>
+    <p class="hero-lede">
+      Almanach revírov, mapový register a denník úlovkov pre slovenských rybárov.
+      Od Liptovskej Mary po Dunaj — nájdi miesto, zaznamenaj úlovok, sleduj sezónu.
+    </p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="/revires">
+        Preskúmať revíry
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+      <a class="btn btn-ghost" href="/map">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2V6Z"/><path d="M9 4v16M15 6v16"/></svg>
+        Otvoriť mapu
+      </a>
+    </div>
+    <div class="hero-meta">
+      <div><span>Revíry</span><b><%= featured.length %></b></div>
+      <div><span>Úlovky</span><b><%= recentCatches.length %></b></div>
+      <div><span>Typy vôd</span><b><%= waterTypes.length %></b></div>
+      <div><span>Vydanie</span><b>01</b></div>
+    </div>
+  </div>
+</section>
+
+<section class="container section" style="padding-top:0">
+  <div class="section-head">
+    <div>
+      <span class="mono">02 ∙ Funkcie</span>
+      <h2>Všetko, čo rybár pri vode potrebuje — v jednom portáli.</h2>
+    </div>
+    <span class="mono">SCROLL ↓</span>
+  </div>
+  <div class="bento">
+    <div class="glass bento-cell b-large">
+      <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2V6Z"/><path d="M9 4v16M15 6v16"/></svg></div>
+      <h3>Mapový register revírov</h3>
+      <p class="lede">Geograficky presné polohy s GPS, typom vody a regiónom. Detail revíru ostáva jeden klik ďaleko.</p>
+      <div class="map-shell mini-map" id="mapa">
+        <svg viewBox="0 0 1000 460" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M80 230 C180 90 350 70 510 150 C640 220 770 180 910 250 L910 380 C710 320 560 370 420 310 C280 250 190 330 80 290 Z" fill="var(--map-land)" stroke="var(--map-stroke)" stroke-width="2"/>
+          <% featured.slice(0, 6).forEach(function(s, i){ %>
+            <g class="map-pin <%= i === 0 ? 'active' : '' %>" transform="translate(<%= 160 + i * 130 %> <%= 170 + (i % 3) * 54 %>)">
+              <circle class="pin-ring" r="16"></circle>
+              <circle class="pin-dot" r="5"></circle>
+            </g>
+          <% }) %>
+        </svg>
+        <div class="map-overlay"><span class="mono">Slovensko</span><strong><%= featured.length %> aktívnych revírov</strong></div>
+      </div>
+    </div>
+
+    <div class="glass bento-cell b-half">
+      <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4V4Z"/><path d="M4 16a4 4 0 0 1 4-4h12"/></svg></div>
+      <h3>Denník úlovkov</h3>
+      <p class="lede">Zaznamenávaj druh, váhu, dĺžku, hodnotenie a fotku. AJAX rozhranie pridáva a mení úlovky bez reloadu.</p>
+      <div class="chip-row"><span class="chip">Šťuka 8.4 kg</span><span class="chip">Sumec 42.5 kg</span><span class="chip chip-cyan">+<%= recentCatches.length %></span></div>
+    </div>
+
+    <div class="glass bento-cell b-half">
+      <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M16 8l-2 6-6 2 2-6 6-2Z"/></svg></div>
+      <h3>Filtrovanie podľa typu vody</h3>
+      <p class="lede">Rieka, jazero, priehrada, rybník alebo potok. Register ostáva rýchly aj pri väčšom množstve záznamov.</p>
+      <div class="chip-row">
+        <% waterTypes.forEach(function(w){ %><span class="chip"><%= w.name %></span><% }) %>
+      </div>
+    </div>
+
+    <div class="glass bento-cell b-third"><div class="ico">★</div><h3>Obľúbené revíry</h3><p class="lede">Označuj a zhromažďuj svoje top miesta synchronizované s účtom.</p></div>
+    <div class="glass bento-cell b-third"><div class="ico">⌘</div><h3>Admin nástroje</h3><p class="lede">Správa používateľov, štatistiky a moderácia obsahu pre admin rolu.</p></div>
+    <div class="glass bento-cell b-third"><div class="ico">↯</div><h3>Real-time AJAX</h3><p class="lede">POST, PATCH a DELETE pre úlovky s okamžitou odozvou vo fronte.</p></div>
+  </div>
+</section>
+
+<section class="container section">
+  <div class="section-head">
+    <div>
+      <span class="mono">03 ∙ Top revíry</span>
+      <h2>Najaktívnejšie revíry tejto sezóny.</h2>
+    </div>
+    <a class="btn btn-ghost btn-sm" href="/revires">Všetky revíry →</a>
+  </div>
+  <div class="spot-grid">
+    <% featured.slice(0, 6).forEach(function(s){ %>
+      <a href="/revires/<%= s.id %>" class="spot-card">
+        <div class="spot-image">
+          <% if (s.image_location) { %><img src="<%= s.image_location %>" alt="<%= s.name %>" /><% } else { %><img src="/images/ui/home-river.png" alt="" /><% } %>
+          <div class="badge-row"><span class="chip chip-cyan"><%= s.water_type_name %></span></div>
+          <div class="gradient"></div>
+          <div class="label"><%= s.region.toUpperCase() %></div>
+        </div>
+        <div class="spot-body">
+          <h3><%= s.name %></h3>
+          <div class="meta"><span><%= s.city %></span><span>·</span><span><%= s.region %></span></div>
+          <p class="desc"><%= s.description %></p>
+          <div class="footer">
+            <span class="stat"><b><%= s.catches_count %></b> úlovkov</span>
+            <span class="stat">★ <%= s.avg_rating ? Number(s.avg_rating).toFixed(1) : '—' %></span>
+          </div>
+        </div>
+      </a>
+    <% }) %>
+  </div>
+</section>
+
+<section class="container section" id="ulovky" style="padding-top:0">
+  <div class="section-head">
+    <div>
+      <span class="mono">04 ∙ Posledné úlovky</span>
+      <h2>Z denníkov tichej vody.</h2>
+    </div>
+    <a class="btn btn-ghost btn-sm" href="<%= user ? '/moj-dennik' : '/prihlasenie' %>">Môj denník →</a>
+  </div>
+  <div class="catch-list" id="najnovsie">
+    <% recentCatches.slice(0, 4).forEach(function(c){ %>
+      <article class="catch">
+        <div class="catch-photo"><span class="corner">#<%= String(c.id).padStart(3, '0') %></span></div>
+        <div class="catch-body">
+          <div class="head"><span class="species"><%= c.species %></span><span class="chip"><%= c.spot_name %></span></div>
+          <div class="stats"><span><%= c.weight_kg %> kg</span><span><%= c.length_cm %> cm</span><span><%= new Date(c.caught_at).toLocaleDateString('sk-SK') %></span></div>
+          <% if (c.comment) { %><p class="comment"><%= c.comment %></p><% } %>
+          <span class="author"><%= c.author_name %></span>
+        </div>
+        <div class="catch-actions"><span class="rating"><%= '★'.repeat(c.rating) %></span></div>
+      </article>
+    <% }) %>
+    <% if (!recentCatches.length) { %><div class="glass empty-panel">Zatiaľ žiadne zápisky.</div><% } %>
+  </div>
+</section>
+
+<%- include('../layout/page-end') %>
