@@ -1,0 +1,37 @@
+<%- include('../layout/page-start', { title: 'Prihlásenie', bodyClass: 'page--auth' }) %>
+
+<section class="auth-shell page-enter">
+  <aside class="auth-side">
+    <div class="ornament" aria-hidden="true"></div>
+    <div style="position:relative">
+      <a class="brand" href="/">
+        <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c2-3 5-6 9-6 4 0 7 2 9 4-1 1-1 3 0 4-2 2-5 4-9 4-4 0-7-3-9-6Z"/><circle cx="14" cy="11" r="0.7" fill="currentColor"/></svg></span>
+        <span class="brand-name"><b>Tichá voda</b><small>SK ∙ Rybársky portál</small></span>
+      </a>
+      <h1 class="auth-art-title"><span class="glow">Hlboko</span><br />pod hladinou.</h1>
+      <p class="auth-art-copy">Prihlás sa, otvor denník, zapíš úlovok. Tichá voda registruje každý záber.</p>
+    </div>
+    <div class="auth-art-meta"><span>SLOVENSKO</span><span>·</span><span>REVÍRY</span><span>·</span><span>ÚLOVKY</span></div>
+  </aside>
+
+  <form method="POST" action="/prihlasenie" class="auth-form form-stack" novalidate>
+    <span class="mono">PRIHLÁSENIE</span>
+    <h2>Vitaj späť</h2>
+    <% if (error) { %><div class="flash error static-flash"><span class="dot"></span><%= error %></div><% } %>
+    <div class="field">
+      <label>E-mail</label>
+      <input class="input" type="email" name="email" required autocomplete="email" value="<%= formData.email || '' %>" placeholder="rybar@tichavoda.sk" />
+    </div>
+    <div class="field">
+      <label>Heslo</label>
+      <input class="input" type="password" name="password" required autocomplete="current-password" placeholder="••••••••" />
+    </div>
+    <button class="btn btn-primary btn-block" type="submit">Prihlásiť sa →</button>
+    <div class="row between auth-switch">
+      <span>Si tu prvýkrát?</span>
+      <a href="/registracia">Vytvor si účet →</a>
+    </div>
+  </form>
+</section>
+
+<%- include('../layout/page-end') %>
