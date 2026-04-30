@@ -1,0 +1,73 @@
+<%- include('../layout/page-start', { title: spot ? 'Úprava revíru' : 'Nový revír', bodyClass: 'page--form' }) %>
+
+<section class="container-narrow section page-enter">
+  <a href="<%= spot ? '/revires/' + spot.id : '/revires' %>" class="mono back-link">← REVÍRY</a>
+  <div class="form-heading">
+    <span class="mono"><%= spot ? 'ÚPRAVA REVÍRU' : 'NOVÝ REVÍR' %></span>
+    <h2><%= spot ? 'Upraviť ' + spot.name : 'Pridaj nový revír' %></h2>
+  </div>
+
+  <% if (error) { %><div class="flash error static-flash"><span class="dot"></span><%= error %></div><% } %>
+
+  <form method="POST" action="<%= action %>" enctype="multipart/form-data" class="glass form-stack" style="padding:32px" novalidate>
+    <div class="field">
+      <label>Názov revíru</label>
+      <input class="input" type="text" name="name" required maxlength="180" placeholder="napr. Liptovská Mara" value="<%= formData.name || (spot ? spot.name : '') %>" />
+      <span class="hint">Tak, ako ho rybári volajú v okolí.</span>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Typ vody</label>
+        <select class="select" name="water_type_id" required>
+          <option value="">— vyberte —</option>
+          <% waterTypes.forEach(function(t){ %>
+            <option value="<%= t.id %>" <%= ((formData.water_type_id ? Number(formData.water_type_id) : (spot ? spot.water_type_id : null)) === t.id) ? 'selected' : '' %>><%= t.name %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="field">
+        <label>Kraj</label>
+        <input class="input" type="text" name="region" required value="<%= formData.region || (spot ? spot.region : '') %>" />
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Mesto / obec</label>
+        <input class="input" type="text" name="city" required value="<%= formData.city || (spot ? spot.city : '') %>" />
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>GPS lat</label>
+          <input class="input" type="number" step="0.000001" name="gps_lat" placeholder="49.092800" value="<%= formData.gps_lat || (spot && spot.gps_lat ? spot.gps_lat : '') %>" />
+        </div>
+        <div class="field">
+          <label>GPS lon</label>
+          <input class="input" type="number" step="0.000001" name="gps_lon" placeholder="19.506100" value="<%= formData.gps_lon || (spot && spot.gps_lon ? spot.gps_lon : '') %>" />
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Popis</label>
+      <textarea class="textarea" name="description" rows="6" required minlength="20" placeholder="Charakter vody, dostupnosť, druhy rýb, tipy..."><%= formData.description || (spot ? spot.description : '') %></textarea>
+      <span class="hint">Aspoň 20 znakov. Píšte tak, aby si čitateľ vedel predstaviť breh, hĺbku a podmienky.</span>
+    </div>
+
+    <div class="field">
+      <label>Obrázok revíru <% if (spot && spot.image_location) { %><span class="hint">(aktuálny ostáva, ak nenahráte nový)</span><% } %></label>
+      <input class="input" type="file" name="image" accept="image/*" />
+      <% if (spot && spot.image_location) { %>
+        <div class="current-image"><img src="<%= spot.image_location %>" alt="" /></div>
+      <% } %>
+    </div>
+
+    <div class="row gap-sm" style="margin-top:10px;justify-content:flex-end">
+      <a href="<%= spot ? '/revires/' + spot.id : '/revires' %>" class="btn btn-ghost">Zrušiť</a>
+      <button type="submit" class="btn btn-primary"><%= spot ? 'Uložiť zmeny' : 'Pridať revír' %></button>
+    </div>
+  </form>
+</section>
+
+<%- include('../layout/page-end') %>

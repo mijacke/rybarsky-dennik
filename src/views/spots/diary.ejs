@@ -1,0 +1,67 @@
+<%- include('../layout/page-start', { title: 'Môj denník', bodyClass: 'page--diary' }) %>
+
+<section class="container section page-enter">
+  <div class="section-head">
+    <div>
+      <span class="mono">DENNÍK ∙ <%= user.name.toUpperCase() %></span>
+      <h2>Môj denník.</h2>
+    </div>
+    <a class="btn btn-primary btn-sm" href="/revires/new">+ Pridať revír</a>
+  </div>
+
+  <div class="bento" style="margin-bottom:32px">
+    <div class="glass stat-card b-quart"><div class="label">Moje revíry</div><div class="value"><span class="glow"><%= spots.length %></span></div><div class="delta">vlastné záznamy</div></div>
+    <div class="glass stat-card b-quart"><div class="label">Moje úlovky</div><div class="value"><%= catches.length %></div><div class="delta">z denníka</div></div>
+    <div class="glass stat-card b-quart"><div class="label">Spolu kg</div><div class="value"><%= catches.reduce((s, c) => s + Number(c.weight_kg || 0), 0).toFixed(1) %><span style="font-size:18px;color:var(--ink-mute);margin-left:6px">kg</span></div><div class="delta dim">súčet úlovkov</div></div>
+    <div class="glass stat-card b-quart"><div class="label">Obľúbené</div><div class="value"><%= favorites.length %></div><div class="delta dim">uložené miesta</div></div>
+  </div>
+
+  <div class="section-head"><span class="mono">MOJE REVÍRY</span></div>
+  <% if (spots.length === 0) { %>
+    <div class="glass empty-panel">Zatiaľ ste nepridali žiaden revír. <a href="/revires/new">Pridať prvý →</a></div>
+  <% } else { %>
+    <div class="spot-grid" style="margin-bottom:48px">
+      <% spots.forEach(function(s){ %>
+        <a href="/revires/<%= s.id %>" class="spot-card">
+          <div class="spot-image"><% if (s.image_location) { %><img src="<%= s.image_location %>" alt="" /><% } else { %><img src="/images/ui/home-river.png" alt="" /><% } %><div class="badge-row"><span class="chip chip-cyan"><%= s.water_type_name %></span></div><div class="gradient"></div><div class="label"><%= s.region.toUpperCase() %></div></div>
+          <div class="spot-body"><h3><%= s.name %></h3><div class="meta"><span><%= s.city %></span></div><div class="footer"><span class="stat"><b><%= s.catches_count %></b> úlovkov</span></div></div>
+        </a>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <div class="section-head"><span class="mono">OBĽÚBENÉ</span></div>
+  <% if (favorites.length === 0) { %>
+    <div class="glass empty-panel" style="margin-bottom:48px">Zatiaľ ste si nepridali žiaden revír do obľúbených.</div>
+  <% } else { %>
+    <div class="spot-grid" style="margin-bottom:48px">
+      <% favorites.forEach(function(s){ %>
+        <a href="/revires/<%= s.id %>" class="spot-card">
+          <div class="spot-image"><% if (s.image_location) { %><img src="<%= s.image_location %>" alt="" /><% } else { %><img src="/images/ui/home-river.png" alt="" /><% } %><div class="badge-row"><span class="chip chip-cyan"><%= s.water_type_name %></span></div><div class="gradient"></div><div class="label"><%= s.region.toUpperCase() %></div></div>
+          <div class="spot-body"><h3><%= s.name %></h3><div class="meta"><span><%= s.city %></span></div></div>
+        </a>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <div class="section-head"><span class="mono">MOJE ÚLOVKY</span></div>
+  <% if (catches.length === 0) { %>
+    <div class="glass empty-panel">Zatiaľ žiaden úlovok.</div>
+  <% } else { %>
+    <div class="catch-list">
+      <% catches.forEach(function(c){ %>
+        <article class="catch">
+          <div class="catch-photo"><span class="corner">#<%= String(c.id).padStart(3, '0') %></span></div>
+          <div class="catch-body">
+            <div class="head"><span class="species"><%= c.species %></span><a class="chip" href="/revires/<%= c.spot_id %>"><%= c.spot_name %></a></div>
+            <div class="stats"><span><%= c.weight_kg %> kg</span><span><%= c.length_cm %> cm</span><span><%= new Date(c.caught_at).toLocaleDateString('sk-SK') %></span></div>
+            <% if (c.comment) { %><p class="comment"><%= c.comment %></p><% } %>
+          </div>
+          <div class="catch-actions"><span class="rating"><%= '★'.repeat(c.rating) %></span></div>
+        </article>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('../layout/page-end') %>

@@ -1,0 +1,64 @@
+<%- include('../layout/page-start', { title: 'Revíry', bodyClass: 'page--spots' }) %>
+
+<section class="container section page-enter">
+  <div class="section-head">
+    <div>
+      <span class="mono">REVÍRY ∙ <%= spots.length %> záznamov</span>
+      <h2>Register revírov.</h2>
+    </div>
+    <% if (user) { %>
+      <a class="btn btn-primary" href="/revires/new">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        Pridať revír
+      </a>
+    <% } %>
+  </div>
+
+  <form method="GET" action="/revires" class="filter-bar" id="mapa">
+    <span class="label">Hľadať</span>
+    <input type="text" name="region" class="input input-compact" placeholder="Kraj, mesto, názov..." value="<%= filters.region || '' %>" />
+    <span class="label">Typ vody</span>
+    <button type="submit" name="water_type" value="" class="filter-pill <%= !filters.water_type_id ? 'active' : '' %>">Všetky</button>
+    <% waterTypes.forEach(function(t){ %>
+      <button type="submit" name="water_type" value="<%= t.id %>" class="filter-pill <%= filters.water_type_id === t.id ? 'active' : '' %>"><%= t.name %></button>
+    <% }) %>
+    <span style="flex:1"></span>
+    <button type="submit" class="btn btn-ghost btn-sm">Filtrovať</button>
+    <% if (filters.water_type_id || filters.region) { %><a href="/revires" class="btn btn-quiet btn-sm">Zrušiť</a><% } %>
+  </form>
+
+  <% if (spots.length === 0) { %>
+    <div class="glass empty-panel">
+      <span class="mono">Nič sa nenašlo</span>
+      <p>Skús iný filter alebo pridaj nový revír.</p>
+      <% if (user) { %><a href="/revires/new" class="btn btn-primary">Pridať prvý revír</a><% } %>
+    </div>
+  <% } else { %>
+    <div class="spot-grid">
+      <% spots.forEach(function(s){ %>
+        <a href="/revires/<%= s.id %>" class="spot-card">
+          <div class="spot-image">
+            <% if (s.image_location) { %><img src="<%= s.image_location %>" alt="<%= s.name %>" /><% } else { %><img src="/images/ui/home-river.png" alt="" /><% } %>
+            <div class="badge-row"><span class="chip chip-cyan"><%= s.water_type_name %></span></div>
+            <div class="gradient"></div>
+            <div class="label"><%= s.region.toUpperCase() %></div>
+          </div>
+          <div class="spot-body">
+            <h3><%= s.name %></h3>
+            <div class="meta">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13Z"/><circle cx="12" cy="9" r="2.5"/></svg>
+              <span><%= s.city %></span><span>·</span><span><%= s.region %></span>
+            </div>
+            <p class="desc"><%= s.description %></p>
+            <div class="footer">
+              <span class="stat"><b><%= s.catches_count %></b> úlovkov</span>
+              <% if (s.avg_rating) { %><span class="stat">★ <%= Number(s.avg_rating).toFixed(1) %></span><% } %>
+            </div>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('../layout/page-end') %>
