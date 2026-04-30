@@ -1,0 +1,45 @@
+<%- include('../layout/page-start', { title: 'Používatelia', bodyClass: 'page--admin' }) %>
+
+<section class="page-head page-head--row">
+  <div>
+    <span class="kicker">§ Admin · Používatelia</span>
+    <h1 class="page-head__title">Členovia almanachu</h1>
+  </div>
+  <a href="/admin/users/new" class="btn btn--ink">+ Pridať používateľa</a>
+</section>
+
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>№</th>
+        <th>Meno</th>
+        <th>Email</th>
+        <th>Rola</th>
+        <th>Registrovaný</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% users.forEach(function(u, i){ %>
+        <tr>
+          <td class="table__num"><%= i + 1 %></td>
+          <td><strong><%= u.name %></strong></td>
+          <td><%= u.email %></td>
+          <td><% if (u.isAdmin) { %><span class="pill pill--admin">Admin</span><% } else { %><span class="pill">Rybár</span><% } %></td>
+          <td><%= u.created_at ? new Date(u.created_at).toLocaleDateString('sk-SK') : '—' %></td>
+          <td class="table__actions">
+            <a href="/admin/users/<%= u.id %>/edit" class="link-button">Upraviť</a>
+            <% if (u.id !== user.id) { %>
+              <form method="POST" action="/admin/users/<%= u.id %>/delete" class="inline-form" onsubmit="return confirm('Naozaj vymazať používateľa <%= u.name %>?');">
+                <button type="submit" class="link-button link-button--danger">Vymazať</button>
+              </form>
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('../layout/page-end') %>

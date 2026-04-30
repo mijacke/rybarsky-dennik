@@ -1,0 +1,36 @@
+<%- include('../layout/page-start', { title: 'Admin', bodyClass: 'page--admin' }) %>
+
+<section class="container section page-enter">
+  <div class="section-head">
+    <div>
+      <span class="mono">ADMIN ∙ PREHĽAD</span>
+      <h2>Riadiaca centrála.</h2>
+    </div>
+    <a class="btn btn-ghost btn-sm" href="/admin/users">Spravovať používateľov</a>
+  </div>
+
+  <div class="bento" style="margin-bottom:32px">
+    <div class="glass stat-card b-quart"><div class="label">Používatelia</div><div class="value"><span class="glow"><%= stats.users_count %></span></div><div class="delta">účty</div></div>
+    <div class="glass stat-card b-quart"><div class="label">Revíry</div><div class="value"><%= stats.spots_count %></div><div class="delta">miesta</div></div>
+    <div class="glass stat-card b-quart"><div class="label">Úlovky</div><div class="value"><%= stats.catches_count %></div><div class="delta">záznamy</div></div>
+    <div class="glass stat-card b-quart"><div class="label">Obľúbené</div><div class="value"><%= stats.favorites_count %></div><div class="delta dim">uložené</div></div>
+  </div>
+
+  <div class="admin-panel-grid">
+    <div class="glass" style="padding:28px">
+      <span class="mono">SPRÁVA</span>
+      <div class="row gap-sm wrap" style="margin-top:20px">
+        <a href="/admin/users" class="btn btn-primary">Spravovať používateľov →</a>
+        <a href="/revires" class="btn btn-ghost">Otvoriť register revírov</a>
+      </div>
+    </div>
+    <div class="glass sidebar-card">
+      <span class="mono">SYSTÉM</span>
+      <div class="kv"><span class="k">Server</span><span class="v" style="color:var(--signal)">● online</span></div>
+      <div class="kv"><span class="k">Stack</span><span class="v">Node · EJS</span></div>
+      <div class="kv"><span class="k">DB</span><span class="v">MySQL</span></div>
+    </div>
+  </div>
+</section>
+
+<%- include('../layout/page-end') %>

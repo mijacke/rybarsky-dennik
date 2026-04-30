@@ -1,0 +1,33 @@
+<%- include('../layout/page-start', { title: user ? 'Upraviť používateľa' : 'Nový používateľ', bodyClass: 'page--admin page--form' }) %>
+
+<section class="form-page">
+  <span class="kicker">§ Admin</span>
+  <h1 class="form-page__title"><%= user ? 'Upraviť ' + user.name : 'Nový používateľ' %></h1>
+
+  <% if (error) { %><div class="form-error"><%= error %></div><% } %>
+
+  <form method="POST" action="<%= action %>" class="form" novalidate>
+    <label class="field">
+      <span class="field__label">Meno</span>
+      <input class="field__input" type="text" name="name" required value="<%= formData.name || (user ? user.name : '') %>" />
+    </label>
+    <label class="field">
+      <span class="field__label">Email</span>
+      <input class="field__input" type="email" name="email" required value="<%= formData.email || (user ? user.email : '') %>" />
+    </label>
+    <label class="field">
+      <span class="field__label">Heslo <% if (user) { %>(nechajte prázdne ak nemeníte)<% } %></span>
+      <input class="field__input" type="password" name="password" autocomplete="new-password" />
+    </label>
+    <label class="field field--checkbox">
+      <input type="checkbox" name="isAdmin" id="isAdmin" <%= (formData.isAdmin === 'on' || (user && user.isAdmin)) ? 'checked' : '' %> />
+      <span class="field__label">Admin oprávnenia</span>
+    </label>
+    <div class="form__actions">
+      <a href="/admin/users" class="btn btn--ghost">Zrušiť</a>
+      <button type="submit" class="btn btn--ink"><%= user ? 'Uložiť zmeny' : 'Vytvoriť' %></button>
+    </div>
+  </form>
+</section>
+
+<%- include('../layout/page-end') %>
