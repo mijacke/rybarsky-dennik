@@ -1,0 +1,93 @@
+<%- include('../layout/page-start', { title: 'Mapa', bodyClass: 'page--map' }) %>
+
+<%
+  const flagByRegion = {
+    'Slovensko': '🇸🇰',
+    'Nórsko': '🇳🇴',
+    'Brazília': '🇧🇷',
+    'Nový Zéland': '🇳🇿',
+    'Kanada': '🇨🇦',
+    'USA': '🇺🇸',
+    'Keňa / Tanzánia / Uganda': '🌍',
+    'Rusko': '🇷🇺',
+    'Čína': '🇨🇳',
+    'Egypt': '🇪🇬',
+    'Argentína': '🇦🇷'
+  };
+  const speciesByName = {
+    'Liptovská Mara': 'Šťuka, Zubáč, Kapor',
+    'Gaula River': 'Atlantic salmon',
+    'Amazon Basin': 'Peacock bass, Arapaima, Piraíba',
+    'Tongariro River': 'Rainbow trout, Brown trout',
+    'Campbell River': 'Chinook salmon, Steelhead',
+    'Madison River': 'Brown trout, Rainbow trout',
+    'Lake Victoria': 'Nile perch, Tilapia',
+    'Lake Baikal': 'Omul, Grayling, Pike',
+    'Three Gorges Reservoir': 'Carp, Catfish, Mandarin fish',
+    'Lake Mead': 'Striped bass, Largemouth bass, Catfish',
+    'Nile River': 'Nile perch, Tigerfish, Catfish',
+    'Río Grande': 'Sea trout'
+  };
+  const globeSpots = spots
+    .filter(function(s) { return s.gps_lat && s.gps_lon; })
+    .map(function(s) {
+      return {
+        id: s.id,
+        name: s.name,
+        country: s.region,
+        flag: flagByRegion[s.region] || '🌍',
+        lat: Number(s.gps_lat),
+        lon: Number(s.gps_lon),
+        type: s.water_type_name,
+        species: speciesByName[s.name] || 'Rybársky revír',
+        catches: s.catches_count || 0,
+        rating: s.avg_rating ? Number(s.avg_rating) : 0,
+        note: s.description && s.description.length > 96 ? s.description.slice(0, 96) + '...' : s.description,
+        url: '/revires/' + s.id
+      };
+    });
+%>
+
+<section class="container section page-enter globe-page" id="globeRoot">
+  <div class="section-head">
+    <div>
+      <h2>Geografický register revírov.</h2>
+    </div>
+  </div>
+
+  <script type="application/json" id="globeData"><%- JSON.stringify(globeSpots).replace(/</g, '\\u003c') %></script>
+
+  <div class="globe-section">
+    <div class="globe-layout">
+      <div class="globe-canvas-wrap">
+        <svg class="globe-svg" viewBox="0 0 600 520" aria-label="Rotujúci glóbus rybárskych revírov"></svg>
+        <div class="globe-hint">
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>
+            Ťahaj pre rotáciu
+          </span>
+        </div>
+        <div class="globe-zoom" role="group" aria-label="Priblíženie">
+          <button type="button" class="globe-zoom-btn" data-globe-zoom-in aria-label="Priblížiť">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <button type="button" class="globe-zoom-btn" data-globe-zoom-out aria-label="Oddialiť">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <aside class="globe-sidebar">
+        <div class="globe-sidebar-inner">
+          <div class="globe-spot-card"></div>
+          <div class="globe-list">
+            <span class="mono" style="font-size:10px;letter-spacing:0.12em;color:var(--ink-mute)">TOP REVÍRY SVETA</span>
+            <div class="globe-list-items"></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<%- include('../layout/page-end', { scripts: ['/js/globe.js'] }) %>
