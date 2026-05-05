@@ -1,8 +1,13 @@
 <%- include('../layout/page-start', { title: '404 — Nenájdené', bodyClass: 'page--error' }) %>
-<section class="error-page">
-  <span class="kicker">§ 404</span>
-  <h1 class="error-page__title">Tento breh <em>nemá</em> rybu.</h1>
-  <p class="error-page__lede">Stránka, ktorú hľadáte, neexistuje, alebo bola odplavená prúdom.</p>
-  <a href="/" class="btn btn--ink">Späť na domov →</a>
+<section class="err-shell page-enter">
+  <div class="glass err-card">
+    <div class="err-code">404</div>
+    <h2>Stratený v hmle</h2>
+    <p style="color:var(--ink-soft);margin-top:14px;font-size:16px;max-width:44ch;margin-inline:auto">Stránka, ktorú hľadáš, sa rozplynula nad hladinou.</p>
+    <div class="row gap-sm" style="margin-top:32px;justify-content:center">
+      <a href="/" class="btn btn-primary">Domov →</a>
+      <a href="/revires" class="btn btn-ghost">Revíry</a>
+    </div>
+  </div>
 </section>
 <%- include('../layout/page-end') %>

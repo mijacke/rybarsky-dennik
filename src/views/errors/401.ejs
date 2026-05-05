@@ -1,8 +1,13 @@
 <%- include('../layout/page-start', { title: '401 — Prihlásenie', bodyClass: 'page--error' }) %>
-<section class="error-page">
-  <span class="kicker">§ 401</span>
-  <h1 class="error-page__title">Najprv sa <em>prihláste</em>.</h1>
-  <p class="error-page__lede">Pre túto akciu musíte byť prihlásený do almanachu.</p>
-  <a href="/prihlasenie" class="btn btn--ink">Prihlásiť sa →</a>
+<section class="err-shell page-enter">
+  <div class="glass err-card">
+    <div class="err-code">401</div>
+    <h2>Neprihlásený</h2>
+    <p style="color:var(--ink-soft);margin-top:14px;font-size:16px;max-width:44ch;margin-inline:auto">Tento prístav vyžaduje prihlásenie. Vráť sa s plnou výstrojou.</p>
+    <div class="row gap-sm" style="margin-top:32px;justify-content:center">
+      <a href="/prihlasenie" class="btn btn-primary">Prihlásiť sa →</a>
+      <a href="/" class="btn btn-ghost">Domov</a>
+    </div>
+  </div>
 </section>
 <%- include('../layout/page-end') %>
