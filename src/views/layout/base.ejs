@@ -4,13 +4,16 @@
   <%- include('head', { title: typeof title !== "undefined" ? title : null }) %>
 </head>
 <body class="page <%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>">
-  <a class="skip-link" href="#main">Preskočiť na obsah</a>
-  <div class="paper-grain" aria-hidden="true"></div>
-  <%- include('header') %>
-  <main class="main" id="main">
-    <%- body %>
-  </main>
-  <%- include('footer') %>
+  <div class="app-bg" aria-hidden="true"></div>
+  <div class="app-grid" aria-hidden="true"></div>
+  <div class="app-noise" aria-hidden="true"></div>
+  <div class="shell">
+    <%- include('header') %>
+    <main class="main" id="main" style="flex: 1;">
+      <%- body %>
+    </main>
+    <%- include('footer') %>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="/js/theme.js"></script>
   <% if (typeof scripts !== 'undefined' && scripts) { %>
