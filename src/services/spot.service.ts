@@ -8,7 +8,7 @@ export const spotService = {
   },
 
   async featured() {
-    return Spot.featured(4);
+    return Spot.featured(6);
   },
 
   async detail(id: number) {
