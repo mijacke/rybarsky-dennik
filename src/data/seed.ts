@@ -14,8 +14,8 @@ async function seed() {
     "Potok",
     "More",
   ];
-  for (const name of waterTypes) {
-    await db.query("INSERT IGNORE INTO water_types (name) VALUES (?)", [name]);
+  for (const x of waterTypes) {
+    await db.query("INSERT IGNORE INTO water_types (name) VALUES (?)", [x]);
   }
 
   console.log("→ Sejem používateľov…");
@@ -34,6 +34,24 @@ async function seed() {
     ["Mária Vodárska", "maria@tichavoda.sk", userPass, 0],
   );
 
+  const extraAnglers = [
+    "Peter Hlbočan",
+    "Lucia Brežná",
+    "Tomáš Štíhly",
+    "Eva Kapustová",
+    "Martin Sumár",
+    "Zuzana Pstruhová",
+    "Andrej Lososiar",
+    "Katarína Plotická",
+  ];
+  for (const name of extraAnglers) {
+    const slug = name.toLowerCase().replace(/\s+/g, ".").replace(/[^a-z.]/g, "");
+    await db.query(
+      "INSERT IGNORE INTO users (name, email, password, isAdmin) VALUES (?, ?, ?, ?)",
+      [name, `${slug}@tichavoda.sk`, userPass, 0],
+    );
+  }
+
   const [adminRows] = await db.query<any[]>("SELECT id FROM users WHERE email = ?", [
     "admin@tichavoda.sk",
   ]);
@@ -47,23 +65,25 @@ async function seed() {
   const jozefId = jozefRows[0].id as number;
   const mariaId = mariaRows[0].id as number;
 
+  const [allUserRows] = await db.query<any[]>("SELECT id FROM users WHERE isAdmin = 0");
+  const allUserIds: number[] = allUserRows.map((r: any) => r.id as number);
+
   const [wt] = await db.query<any[]>("SELECT id, name FROM water_types");
   const wtMap = new Map<string, number>(wt.map((r: any) => [r.name, r.id as number]));
 
-  const [existing] = await db.query<any[]>("SELECT COUNT(*) AS c FROM fishing_spots");
-  if (existing[0].c > 0) {
-    console.log("→ Revíri už existujú, preskakujem.");
-    await db.end();
-    return;
-  }
+  console.log("→ Čistím demo dáta revírov, úlovkov a obľúbených…");
+  await db.query("DELETE FROM favorites");
+  await db.query("DELETE FROM catches");
+  await db.query("DELETE FROM fishing_spots");
+  await db.query("DELETE FROM addresses");
 
   console.log("→ Sejem revíry…");
   const spots = [
     {
       name: "Liptovská Mara",
-      desc: "Najväčšia priehrada na Slovensku. Domov rekordných šťúk a zubáčov, s vetrom čo formuje vlny ako rieka v inom svete. Pristup z hrádze pri Liptovskom Mikuláši.",
+      desc: "Najväčšia priehrada na Slovensku. Jediný slovenský revír v svetovom atlase, známy šťukou, zubáčom a vetrom, ktorý mení hladinu na malé more.",
       type: "Priehrada",
-      region: "Žilinský kraj",
+      region: "Slovensko",
       city: "Liptovský Mikuláš",
       lat: 49.0928,
       lon: 19.5061,
@@ -71,125 +91,125 @@ async function seed() {
       image: "/images/uploads/spots/liptovska-mara.png",
     },
     {
-      name: "Oravská priehrada",
-      desc: "Tichá voda obklopená lesmi. Ranné hmly, kde sa zubáč ráno hýbe ako tieň. Lipy, smrekovce, vôňa živice. Z móla pri Námestove sa dá loviť aj na plavák.",
-      type: "Priehrada",
-      region: "Žilinský kraj",
-      city: "Námestovo",
-      lat: 49.4076,
-      lon: 19.5089,
-      author: mariaId,
-      image: "/images/uploads/spots/oravska-priehrada.png",
-    },
-    {
-      name: "Dunaj — Bratislava (Devín)",
-      desc: "Veľká voda, veľké ryby. Sumce nad sto kilo, kapry ako prasiatka. Vyžaduje rešpekt a ťažší výstroj. Ideálny zaberajúci úsek od Devína po Karloveské rameno.",
+      name: "Gaula River",
+      desc: "Nórska lososová rieka južne od Trondheimu. Patrí medzi najznámejšie európske miesta pre lov atlantského lososa na mušku.",
       type: "Rieka",
-      region: "Bratislavský kraj",
-      city: "Bratislava",
-      lat: 48.1737,
-      lon: 16.9794,
-      author: jozefId,
-      image: "/images/uploads/spots/dunaj-devin.png",
+      region: "Nórsko",
+      city: "Trøndelag",
+      lat: 63.2,
+      lon: 10.3,
+      author: mariaId,
+      image: "/images/uploads/spots/norsko-gaula-river.png",
     },
     {
-      name: "Váh — Žilina",
-      desc: "Pstruh dúhový a hlavátka v hornom toku. V meste pekné prielety pri vlnoreze. Vyžaduje topánky s dobrou prilnavosťou — kamene sú zradné.",
+      name: "Amazon Basin",
+      desc: "Najväčší riečny systém sveta. Tropický sladkovodný labyrint s arapaimou, pávím ostriežom, piraíbou a extrémnou druhovou pestrosťou.",
       type: "Rieka",
-      region: "Žilinský kraj",
-      city: "Žilina",
-      lat: 49.2235,
-      lon: 18.7394,
-      author: mariaId,
-      image: "/images/uploads/spots/vah-zilina.png",
-    },
-    {
-      name: "Zemplínska Šírava",
-      desc: "Slovenské more. Teplá voda v lete, výborné kapry a sumce. Veterná lokalita — voľte miesto za vetrom. Pri Vinianskom kameni býva v auguste húf zubáčov.",
-      type: "Priehrada",
-      region: "Košický kraj",
-      city: "Michalovce",
-      lat: 48.8154,
-      lon: 21.9756,
+      region: "Brazília",
+      city: "Manaus",
+      lat: -3.5,
+      lon: -60.0,
       author: jozefId,
-      image: "/images/uploads/spots/zemplinska-sirava.png",
+      image: "/images/uploads/spots/brazilia-amazon-basin.png",
     },
     {
-      name: "Domaša",
-      desc: "Druhá najväčšia priehrada. Tichý kus prírody, ideálny pre dlhé stojánky. Šťuka v zátokách pri vyústení potokov. Spoľahlivý úspech na rybku 8–12 cm.",
-      type: "Priehrada",
-      region: "Prešovský kraj",
-      city: "Vranov nad Topľou",
-      lat: 49.0578,
-      lon: 21.6225,
-      author: mariaId,
-      image: "/images/uploads/spots/domasa.png",
-    },
-    {
-      name: "Sĺňava",
-      desc: "Priehrada na Váhu pri Piešťanoch. Vlnitá voda, čisté brehy, ľahká dostupnosť. Známa zubáčmi v jesennom období a kaprami pri sútoku s Hornou Stredou.",
-      type: "Priehrada",
-      region: "Trnavský kraj",
-      city: "Piešťany",
-      lat: 48.5853,
-      lon: 17.8281,
-      author: jozefId,
-      image: "/images/uploads/spots/slnava.png",
-    },
-    {
-      name: "Hron — Banská Bystrica",
-      desc: "Pstruhárska klasika. Ráno je voda priezračná ako sklo. Pstruh potočný berie na živú aj na umelú mušku. Najlepší úsek nad Šálkovou.",
+      name: "Tongariro River",
+      desc: "Novozélandská pstruhová legenda pri jazere Taupō. Čistá voda, prudké prúdy a celoročný lov dúhových a potočných pstruhov.",
       type: "Rieka",
-      region: "Banskobystrický kraj",
-      city: "Banská Bystrica",
-      lat: 48.7359,
-      lon: 19.1463,
+      region: "Nový Zéland",
+      city: "Turangi",
+      lat: -39.0,
+      lon: 175.8,
       author: mariaId,
-      image: "/images/uploads/spots/hron-banska-bystrica.png",
+      image: "/images/uploads/spots/novy-zeland-tongariro-river.png",
     },
     {
-      name: "Rybník Tona",
-      desc: "Malý komorný rybník schovaný za železničnou traťou. Domáce kapry, karasy, červené plotice. Ideálne pre začiatočníkov a deti.",
-      type: "Rybník",
-      region: "Trenčiansky kraj",
-      city: "Trenčín",
-      lat: 48.8945,
-      lon: 18.0445,
+      name: "Campbell River",
+      desc: "Kanadská lososová klasika na Vancouver Island. Preslávená ťahmi chinooka, coho a steelheada, často nazývaná Salmon Capital of the World.",
+      type: "Rieka",
+      region: "Kanada",
+      city: "British Columbia",
+      lat: 50.0,
+      lon: -125.2,
       author: jozefId,
-      image: "/images/uploads/spots/rybnik-tona.png",
+      image: "/images/uploads/spots/kanada-campbell-river.png",
     },
     {
-      name: "Potok Revúca",
-      desc: "Horský pstruhársky potok. Studená čistá voda, kamenisté dno. Vyžaduje brodenie a pokoj. Pstruhárske revíry s množstvom úkrytov pod brehom.",
-      type: "Potok",
-      region: "Žilinský kraj",
-      city: "Ružomberok",
-      lat: 49.0833,
-      lon: 19.3,
+      name: "Madison River",
+      desc: "Montanská muškárska ikona so stabilným prúdom a divokými pstruhmi. Rieka je známa ako jeden z najlepších trout streamov v USA.",
+      type: "Rieka",
+      region: "USA",
+      city: "Montana",
+      lat: 44.9,
+      lon: -111.5,
       author: mariaId,
-      image: "/images/uploads/spots/potok-revuca.png",
+      image: "/images/uploads/spots/usa-madison-river.png",
     },
     {
-      name: "Ružín",
-      desc: "Horská priehrada s mimoriadnou hĺbkou. Sumce nad 80 kg, šťuky, zubáče. Členitý breh — nájdete si svoj kút.",
-      type: "Priehrada",
-      region: "Košický kraj",
-      city: "Košice-okolie",
-      lat: 48.8542,
-      lon: 21.0844,
-      author: jozefId,
-      image: "/images/uploads/spots/ruzin.png",
-    },
-    {
-      name: "Jazero Senec — Slnečné jazerá",
-      desc: "Mestské jazerá s prístupnými brehmi. Kapor, amur, šťuka. Ideálne pre večerné lovenie po práci.",
+      name: "Lake Victoria",
+      desc: "Najväčšie tropické jazero sveta. Východoafrický rybársky gigant známy nílskym ostriežom, tilapiou a obrovskou komerčnou aj športovou hodnotou.",
       type: "Jazero",
-      region: "Bratislavský kraj",
-      city: "Senec",
-      lat: 48.2197,
-      lon: 17.4006,
+      region: "Keňa / Tanzánia / Uganda",
+      city: "Kisumu",
+      lat: -0.8,
+      lon: 33.2,
+      author: jozefId,
+      image: "/images/uploads/spots/vychodna-afrika-lake-victoria.png",
+    },
+    {
+      name: "Lake Baikal",
+      desc: "Najhlbšie jazero sveta a sibírska ikona. Priezračná voda, omul, lipeň, šťuka a unikátny ekosystém s endemickými druhmi.",
+      type: "Jazero",
+      region: "Rusko",
+      city: "Irkutská oblasť",
+      lat: 53.5,
+      lon: 108.2,
       author: mariaId,
-      image: "/images/uploads/spots/slnecne-jazera.png",
+      image: "/images/uploads/spots/rusko-lake-baikal.png",
+    },
+    {
+      name: "Three Gorges Reservoir",
+      desc: "Obrovská priehradná nádrž na rieke Jang-c’-ťiang. Rozsiahly sladkovodný systém s kaprami, sumcami a mandarínskou rybou.",
+      type: "Priehrada",
+      region: "Čína",
+      city: "Hubei",
+      lat: 30.8,
+      lon: 111.0,
+      author: jozefId,
+      image: "/images/uploads/spots/cina-three-gorges-reservoir.png",
+    },
+    {
+      name: "Lake Mead",
+      desc: "Legendárna americká priehradná nádrž pri Hoover Dam. Známa lovom pruhovaných ostriežov, largemouth bassov a sumcov v púštnej krajine.",
+      type: "Priehrada",
+      region: "USA",
+      city: "Nevada / Arizona",
+      lat: 36.1,
+      lon: -114.4,
+      author: mariaId,
+      image: "/images/uploads/spots/usa-lake-mead.png",
+    },
+    {
+      name: "Nile River",
+      desc: "Jedna z najznámejších riek sveta. Historická tepna severovýchodnej Afriky s nílskym ostriežom, sumcami a tigerfish v horných úsekoch.",
+      type: "Rieka",
+      region: "Egypt",
+      city: "Luxor",
+      lat: 26.8,
+      lon: 30.8,
+      author: jozefId,
+      image: "/images/uploads/spots/egypt-nile-river.png",
+    },
+    {
+      name: "Río Grande",
+      desc: "Patagónska rieka preslávená veľkými morskými pstruhmi. Drsná krajina, vietor a životné úlovky na južnom konci Argentíny.",
+      type: "Rieka",
+      region: "Argentína",
+      city: "Tierra del Fuego",
+      lat: -53.8,
+      lon: -67.7,
+      author: mariaId,
+      image: "/images/uploads/spots/argentina-rio-grande.png",
     },
   ];
 
@@ -212,14 +232,17 @@ async function seed() {
   const catches = [
     { spot: "Liptovská Mara", user: jozefId, sp: "Šťuka severná", w: 8.4, l: 92, r: 5, c: "Brala na rybku, ranná hmla. Boj 12 minút." },
     { spot: "Liptovská Mara", user: mariaId, sp: "Zubáč obyčajný", w: 4.2, l: 78, r: 4, c: "Tesne pred západom slnka." },
-    { spot: "Oravská priehrada", user: mariaId, sp: "Šťuka severná", w: 6.1, l: 85, r: 5, c: "Z móla, na červený twister." },
-    { spot: "Dunaj — Bratislava (Devín)", user: jozefId, sp: "Sumec veľký", w: 42.5, l: 198, r: 5, c: "45 minút boja. Aj sused rybár pomohol s podberákom." },
-    { spot: "Domaša", user: mariaId, sp: "Kapor obyčajný", w: 11.2, l: 82, r: 5, c: "Ráno o piatej, nočná návnada." },
-    { spot: "Hron — Banská Bystrica", user: jozefId, sp: "Pstruh potočný", w: 1.8, l: 48, r: 4, c: "Mušia muška. Voda krištálová." },
-    { spot: "Sĺňava", user: mariaId, sp: "Zubáč obyčajný", w: 3.5, l: 71, r: 4, c: "Z brehu, na živú plotku." },
-    { spot: "Zemplínska Šírava", user: jozefId, sp: "Sumec veľký", w: 28.0, l: 165, r: 5, c: "Z lode, hĺbka 8 m." },
-    { spot: "Rybník Tona", user: mariaId, sp: "Kapor obyčajný", w: 4.5, l: 56, r: 3, c: "Výborné na fotku s deťmi." },
-    { spot: "Ružín", user: jozefId, sp: "Šťuka severná", w: 9.7, l: 96, r: 5, c: "Spinning, ranná zóna." },
+    { spot: "Gaula River", user: mariaId, sp: "Atlantic salmon", w: 12.6, l: 104, r: 5, c: "Muška v studenom prúde, prudký výpad po zábere." },
+    { spot: "Amazon Basin", user: jozefId, sp: "Arapaima", w: 86.0, l: 214, r: 5, c: "Obrovská ryba v tichej lagúne pri zatopenom lese." },
+    { spot: "Tongariro River", user: mariaId, sp: "Rainbow trout", w: 3.4, l: 61, r: 5, c: "Čistá voda, rýchly drift a tvrdý záber v prúde." },
+    { spot: "Campbell River", user: jozefId, sp: "Chinook salmon", w: 24.5, l: 126, r: 5, c: "Losos sa držal pri hrane prúdu, boj trval skoro pol hodiny." },
+    { spot: "Madison River", user: mariaId, sp: "Brown trout", w: 2.7, l: 57, r: 4, c: "Suchá muška počas večerného rojenia." },
+    { spot: "Lake Victoria", user: jozefId, sp: "Nile perch", w: 38.0, l: 142, r: 5, c: "Ťažký ťah z hlbšej vody pri ostrovnom zlome." },
+    { spot: "Lake Baikal", user: mariaId, sp: "Omul", w: 1.6, l: 45, r: 4, c: "Ľadovo čistá voda, jemný záber pri kamennom brehu." },
+    { spot: "Three Gorges Reservoir", user: jozefId, sp: "Carp", w: 14.3, l: 88, r: 4, c: "Nočný kapor z tichej zátoky nádrže." },
+    { spot: "Lake Mead", user: mariaId, sp: "Striped bass", w: 9.1, l: 82, r: 5, c: "Tvrdý útok pri skalnatom výbežku." },
+    { spot: "Nile River", user: jozefId, sp: "Nile perch", w: 31.5, l: 133, r: 5, c: "Silný záber za súmraku, veľká ryba z hlbiny." },
+    { spot: "Río Grande", user: mariaId, sp: "Sea trout", w: 9.8, l: 89, r: 5, c: "Patagónsky vietor, ťažká šnúra a životný morský pstruh." },
   ];
 
   for (const c of catches) {
@@ -228,6 +251,74 @@ async function seed() {
     await db.query(
       "INSERT INTO catches (spot_id, user_id, species, weight_kg, length_cm, rating, comment) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [spotId, c.user, c.sp, c.w, c.l, c.r, c.c],
+    );
+  }
+
+  console.log("→ Doplňujem úlovky tak, aby každý revír mal aspoň 5 záznamov…");
+  const speciesBySpot: Record<string, string[]> = {
+    "Liptovská Mara": ["Šťuka severná", "Zubáč obyčajný", "Kapor", "Jalec hlavatý", "Pleskáč"],
+    "Gaula River": ["Atlantic salmon", "Sea trout", "Brown trout", "Grayling"],
+    "Amazon Basin": ["Peacock bass", "Arapaima", "Piraíba", "Tambaqui", "Pirarucu"],
+    "Tongariro River": ["Rainbow trout", "Brown trout"],
+    "Campbell River": ["Chinook salmon", "Steelhead", "Coho salmon", "Pink salmon"],
+    "Madison River": ["Brown trout", "Rainbow trout", "Cutthroat trout"],
+    "Lake Victoria": ["Nile perch", "Tilapia", "Catfish"],
+    "Lake Baikal": ["Omul", "Grayling", "Pike", "Sturgeon"],
+    "Three Gorges Reservoir": ["Carp", "Catfish", "Mandarin fish", "Black carp"],
+    "Lake Mead": ["Striped bass", "Largemouth bass", "Catfish", "Crappie"],
+    "Nile River": ["Nile perch", "Tigerfish", "Catfish", "Vundu"],
+    "Río Grande": ["Sea trout", "Brown trout", "Steelhead"],
+  };
+  const fillerComments = [
+    "Pokojné popoludnie, voda číra, záber po dlhom čakaní.",
+    "Vetrisko z hôr, ale ryba zabrala tesne pred zotmením.",
+    "Dlhý drift, jemná muška, krásny boj.",
+    "Skoro ráno, hmla na vode, prudký ťah na šnúre.",
+    "Tichá zátoka, kotvička v koreňoch, šťastný únik a opätovný záber.",
+    "Po búrke sa ryba rozbehla, hodina trpezlivosti.",
+    "Nočný lov, len mesiac a praskot ohňa na brehu.",
+    "Klasické miesto pri starom móle, overený trik.",
+    "Záber tesne pri brehu, takmer som ho prehliadol.",
+  ];
+  const [allSpotRows] = await db.query<any[]>("SELECT id, name FROM fishing_spots");
+  for (const row of allSpotRows) {
+    const [existingRows] = await db.query<any[]>(
+      "SELECT COUNT(*) AS n FROM catches WHERE spot_id = ?",
+      [row.id],
+    );
+    let have = Number(existingRows[0].n);
+    const speciesList = speciesBySpot[row.name as string] || ["Šťuka severná", "Kapor", "Sumec"];
+    let i = 0;
+    while (have < 5) {
+      const userId = allUserIds[(row.id + have + i) % allUserIds.length];
+      const sp = speciesList[(have + i) % speciesList.length];
+      const w = Number((1 + ((row.id * 7 + have * 3 + i) % 90) / 5).toFixed(1));
+      const l = 35 + ((row.id * 11 + have * 5 + i) % 110);
+      const r = 3 + ((row.id + have + i) % 3);
+      const c = fillerComments[(row.id + have + i) % fillerComments.length];
+      await db.query(
+        "INSERT INTO catches (spot_id, user_id, species, weight_kg, length_cm, rating, comment) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [row.id, userId, sp, w, l, r, c],
+      );
+      have += 1;
+      i += 1;
+    }
+  }
+
+  console.log("→ Sejem obľúbené revíry…");
+  const targetFavorites = 36;
+  const seenFav = new Set<string>();
+  let favIter = 0;
+  while (seenFav.size < targetFavorites && favIter < targetFavorites * 6) {
+    const u = allUserIds[favIter % allUserIds.length];
+    const s = allSpotRows[(favIter * 5 + 3) % allSpotRows.length].id as number;
+    const key = `${u}-${s}`;
+    favIter += 1;
+    if (seenFav.has(key)) continue;
+    seenFav.add(key);
+    await db.query(
+      "INSERT IGNORE INTO favorites (user_id, spot_id) VALUES (?, ?)",
+      [u, s],
     );
   }
 
