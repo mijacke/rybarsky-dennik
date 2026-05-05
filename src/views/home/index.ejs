@@ -1,5 +1,34 @@
 <%- include('../layout/page-start', { title: 'Domov', bodyClass: 'page--home' }) %>
 
+<%
+  const homeFlagByRegion = {
+    'Slovensko': '🇸🇰',
+    'Nórsko': '🇳🇴',
+    'Brazília': '🇧🇷',
+    'Nový Zéland': '🇳🇿',
+    'Kanada': '🇨🇦',
+    'USA': '🇺🇸',
+    'Keňa / Tanzánia / Uganda': '🌍',
+    'Rusko': '🇷🇺',
+    'Čína': '🇨🇳',
+    'Egypt': '🇪🇬',
+    'Argentína': '🇦🇷'
+  };
+  const homeGlobeSpots = allSpots
+    .filter(function(s) { return s.gps_lat && s.gps_lon; })
+    .map(function(s) {
+      return {
+        id: s.id,
+        name: s.name,
+        country: s.region,
+        flag: homeFlagByRegion[s.region] || '🌍',
+        lat: Number(s.gps_lat),
+        lon: Number(s.gps_lon),
+        type: s.water_type_name
+      };
+    });
+%>
+
 <section class="hero">
   <div class="hero-rings" aria-hidden="true">
     <svg viewBox="0 0 600 600">
@@ -12,8 +41,8 @@
     <div class="hero-eyebrow"><span class="pulse"></span> Sezóna 2026 ∙ Aktuálne hladiny</div>
     <h1><span class="glow">Tichá voda</span><br />brehy <span class="accent">podmieľa</span>.</h1>
     <p class="hero-lede">
-      Almanach revírov, mapový register a denník úlovkov pre slovenských rybárov.
-      Od Liptovskej Mary po Dunaj — nájdi miesto, zaznamenaj úlovok, sleduj sezónu.
+      Almanach svetových riek, jazier a priehrad pre rybárov, ktorí chcú mapovať výnimočné vody.
+      Od Liptovskej Mary po Amazon Basin — nájdi miesto, zaznamenaj úlovok, sleduj sezónu.
     </p>
     <div class="hero-cta">
       <a class="btn btn-primary" href="/revires">
@@ -26,10 +55,10 @@
       </a>
     </div>
     <div class="hero-meta">
-      <div><span>Revíry</span><b><%= featured.length %></b></div>
-      <div><span>Úlovky</span><b><%= recentCatches.length %></b></div>
-      <div><span>Typy vôd</span><b><%= waterTypes.length %></b></div>
-      <div><span>Vydanie</span><b>01</b></div>
+      <div><span>Revíry</span><b><%= allSpots.length %></b></div>
+      <div><span>Úlovky</span><b><%= stats.catches %></b></div>
+      <div><span>Rybári</span><b><%= stats.users %></b></div>
+      <div><span>Obľúbené</span><b><%= stats.favorites %></b></div>
     </div>
   </div>
 </section>
@@ -43,21 +72,14 @@
     <span class="mono">SCROLL ↓</span>
   </div>
   <div class="bento">
-    <div class="glass bento-cell b-large">
+    <div class="glass bento-cell b-large home-globe-cell" id="globeRoot" data-globe-mode="static">
       <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2V6Z"/><path d="M9 4v16M15 6v16"/></svg></div>
       <h3>Mapový register revírov</h3>
       <p class="lede">Geograficky presné polohy s GPS, typom vody a regiónom. Detail revíru ostáva jeden klik ďaleko.</p>
-      <div class="map-shell mini-map" id="mapa">
-        <svg viewBox="0 0 1000 460" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M80 230 C180 90 350 70 510 150 C640 220 770 180 910 250 L910 380 C710 320 560 370 420 310 C280 250 190 330 80 290 Z" fill="var(--map-land)" stroke="var(--map-stroke)" stroke-width="2"/>
-          <% featured.slice(0, 6).forEach(function(s, i){ %>
-            <g class="map-pin <%= i === 0 ? 'active' : '' %>" transform="translate(<%= 160 + i * 130 %> <%= 170 + (i % 3) * 54 %>)">
-              <circle class="pin-ring" r="16"></circle>
-              <circle class="pin-dot" r="5"></circle>
-            </g>
-          <% }) %>
-        </svg>
-        <div class="map-overlay"><span class="mono">Slovensko</span><strong><%= featured.length %> aktívnych revírov</strong></div>
+      <script type="application/json" id="globeData"><%- JSON.stringify(homeGlobeSpots).replace(/</g, '\\u003c') %></script>
+      <div class="home-globe">
+        <svg class="globe-svg" viewBox="0 0 600 520" aria-label="Rotujúci glóbus rybárskych revírov" aria-hidden="true"></svg>
+        <div class="map-overlay"><span class="mono">Svet</span><strong><%= featured.length %> aktívnych revírov</strong></div>
       </div>
     </div>
 
@@ -139,4 +161,4 @@
   </div>
 </section>
 
-<%- include('../layout/page-end') %>
+<%- include('../layout/page-end', { scripts: ['/js/globe.js'] }) %>
