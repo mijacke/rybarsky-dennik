@@ -19,7 +19,7 @@ cp .env.example .env
 # 3) Inštalácia
 npm install
 
-# 4) Naplniť demo dátami (vytvorí schému + používateľov + 12 slovenských revírov + úlovky)
+# 4) Naplniť demo dátami (vytvorí schému + používateľov + svetové rieky/jazerá/priehrady + úlovky)
 npm run seed
 
 # 5) Vývojový server
