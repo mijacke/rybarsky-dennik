@@ -1,31 +1,37 @@
 <%- include('../layout/page-start', { title: user ? 'Upraviť používateľa' : 'Nový používateľ', bodyClass: 'page--admin page--form' }) %>
 
-<section class="form-page">
-  <span class="kicker">§ Admin</span>
-  <h1 class="form-page__title"><%= user ? 'Upraviť ' + user.name : 'Nový používateľ' %></h1>
+<section class="container-narrow section page-enter">
+  <a href="/admin/users" class="mono back-link">← POUŽÍVATELIA</a>
+  <div class="form-heading">
+    <span class="mono"><%= user ? 'ÚPRAVA' : 'NOVÝ' %> POUŽÍVATEĽ</span>
+    <h2><%= user ? 'Upraviť ' + user.name : 'Pridaj rybára' %></h2>
+  </div>
 
-  <% if (error) { %><div class="form-error"><%= error %></div><% } %>
+  <% if (error) { %><div class="flash error static-flash"><span class="dot"></span><%= error %></div><% } %>
 
-  <form method="POST" action="<%= action %>" class="form" novalidate>
-    <label class="field">
-      <span class="field__label">Meno</span>
-      <input class="field__input" type="text" name="name" required value="<%= formData.name || (user ? user.name : '') %>" />
-    </label>
-    <label class="field">
-      <span class="field__label">Email</span>
-      <input class="field__input" type="email" name="email" required value="<%= formData.email || (user ? user.email : '') %>" />
-    </label>
-    <label class="field">
-      <span class="field__label">Heslo <% if (user) { %>(nechajte prázdne ak nemeníte)<% } %></span>
-      <input class="field__input" type="password" name="password" autocomplete="new-password" />
-    </label>
-    <label class="field field--checkbox">
-      <input type="checkbox" name="isAdmin" id="isAdmin" <%= (formData.isAdmin === 'on' || (user && user.isAdmin)) ? 'checked' : '' %> />
-      <span class="field__label">Admin oprávnenia</span>
-    </label>
-    <div class="form__actions">
-      <a href="/admin/users" class="btn btn--ghost">Zrušiť</a>
-      <button type="submit" class="btn btn--ink"><%= user ? 'Uložiť zmeny' : 'Vytvoriť' %></button>
+  <form method="POST" action="<%= action %>" class="glass form-stack" style="padding:32px" novalidate>
+    <div class="field">
+      <label>Meno a priezvisko</label>
+      <input class="input" type="text" name="name" required value="<%= formData.name || (user ? user.name : '') %>" placeholder="Jozef Mrázik" />
+    </div>
+    <div class="field">
+      <label>E-mail</label>
+      <input class="input" type="email" name="email" required value="<%= formData.email || (user ? user.email : '') %>" placeholder="rybar@tichavoda.sk" />
+    </div>
+    <div class="field">
+      <label>Heslo <% if (user) { %><span class="hint">(prázdne = ponechať)</span><% } %></label>
+      <input class="input" type="password" name="password" autocomplete="new-password" placeholder="<%= user ? '•••••••• (uložené)' : '' %>" />
+    </div>
+    <div class="field">
+      <label>Rola</label>
+      <label class="check-row">
+        <input type="checkbox" name="isAdmin" id="isAdmin" <%= (formData.isAdmin === 'on' || (user && user.isAdmin)) ? 'checked' : '' %> />
+        <span>Admin oprávnenia</span>
+      </label>
+    </div>
+    <div class="row gap-sm" style="margin-top:10px;justify-content:flex-end">
+      <a href="/admin/users" class="btn btn-ghost">Zrušiť</a>
+      <button type="submit" class="btn btn-primary"><%= user ? 'Uložiť zmeny' : 'Vytvoriť' %></button>
     </div>
   </form>
 </section>

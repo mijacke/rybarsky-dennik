@@ -1,45 +1,68 @@
 <%- include('../layout/page-start', { title: 'Používatelia', bodyClass: 'page--admin' }) %>
 
-<section class="page-head page-head--row">
-  <div>
-    <span class="kicker">§ Admin · Používatelia</span>
-    <h1 class="page-head__title">Členovia almanachu</h1>
+<section class="container section page-enter">
+  <a href="/admin" class="mono back-link">← ADMIN</a>
+  <div class="section-head" style="margin-top:16px">
+    <div>
+      <span class="mono">POUŽÍVATELIA ∙ <%= users.length %></span>
+      <h2>Správa používateľov.</h2>
+    </div>
+    <a href="/admin/users/new" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      Nový používateľ
+    </a>
   </div>
-  <a href="/admin/users/new" class="btn btn--ink">+ Pridať používateľa</a>
-</section>
 
-<div class="table-wrap">
-  <table class="table">
-    <thead>
-      <tr>
-        <th>№</th>
-        <th>Meno</th>
-        <th>Email</th>
-        <th>Rola</th>
-        <th>Registrovaný</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% users.forEach(function(u, i){ %>
+  <div class="t-shell">
+    <table>
+      <thead>
         <tr>
-          <td class="table__num"><%= i + 1 %></td>
-          <td><strong><%= u.name %></strong></td>
-          <td><%= u.email %></td>
-          <td><% if (u.isAdmin) { %><span class="pill pill--admin">Admin</span><% } else { %><span class="pill">Rybár</span><% } %></td>
-          <td><%= u.created_at ? new Date(u.created_at).toLocaleDateString('sk-SK') : '—' %></td>
-          <td class="table__actions">
-            <a href="/admin/users/<%= u.id %>/edit" class="link-button">Upraviť</a>
-            <% if (u.id !== user.id) { %>
-              <form method="POST" action="/admin/users/<%= u.id %>/delete" class="inline-form" onsubmit="return confirm('Naozaj vymazať používateľa <%= u.name %>?');">
-                <button type="submit" class="link-button link-button--danger">Vymazať</button>
-              </form>
-            <% } %>
-          </td>
+          <th></th>
+          <th>Meno</th>
+          <th>E-mail</th>
+          <th>Rola</th>
+          <th>Vytvorený</th>
+          <th></th>
         </tr>
-      <% }) %>
-    </tbody>
-  </table>
-</div>
+      </thead>
+      <tbody>
+        <% users.forEach(function(u){ %>
+          <tr>
+            <td>
+              <span class="avatar"><%= u.name.split(' ').map(function(s){ return s[0]; }).slice(0, 2).join('').toUpperCase() %></span>
+            </td>
+            <td style="color:var(--ink)"><%= u.name %></td>
+            <td class="mono" style="font-size:12px"><%= u.email %></td>
+            <td>
+              <% if (u.isAdmin) { %>
+                <span class="role-pill admin">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l8 3v7c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V5l8-3Z"/></svg>
+                  Admin
+                </span>
+              <% } else { %>
+                <span class="role-pill">Používateľ</span>
+              <% } %>
+            </td>
+            <td class="mono" style="font-size:12px;color:var(--ink-mute)"><%= u.created_at ? new Date(u.created_at).toLocaleDateString('sk-SK') : '—' %></td>
+            <td>
+              <div class="row gap-sm" style="justify-content:flex-end">
+                <a href="/admin/users/<%= u.id %>/edit" class="icon-btn" title="Upraviť" aria-label="Upraviť používateľa <%= u.name %>">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3l5 5-12 12H4v-5L16 3Z"/></svg>
+                </a>
+                <% if (u.id !== user.id) { %>
+                  <form method="POST" action="/admin/users/<%= u.id %>/delete" class="inline-form" onsubmit="return confirm('Naozaj vymazať používateľa <%= u.name %>?');">
+                    <button type="submit" class="icon-btn icon-btn-danger" title="Vymazať" aria-label="Vymazať používateľa <%= u.name %>">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v5M14 11v5"/></svg>
+                    </button>
+                  </form>
+                <% } %>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</section>
 
 <%- include('../layout/page-end') %>
