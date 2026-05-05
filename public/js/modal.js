@@ -9,14 +9,14 @@
     }
     const closer = e.target.closest("[data-modal-close]");
     if (closer) {
-      const modal = closer.closest(".modal");
+      const modal = closer.closest(".modal-layer");
       if (modal) modal.hidden = true;
     }
   });
 
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
-      document.querySelectorAll(".modal:not([hidden])").forEach((m) => (m.hidden = true));
+      document.querySelectorAll(".modal-layer:not([hidden])").forEach((m) => (m.hidden = true));
     }
   });
 })();
