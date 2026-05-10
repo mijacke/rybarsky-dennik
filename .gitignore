@@ -41,10 +41,6 @@ Thumbs.db
 *.swo
 *~
 
-# --- Project Specific ---
-public/images/uploads/*
-!public/images/uploads/.gitkeep
-
 # --- AI & Tools ---
 .playwright-mcp/
 .codex/
